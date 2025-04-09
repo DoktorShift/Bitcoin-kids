@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button"
 import { PiggyBankIcon, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
+import { init, Button as BitcoinConnectButton, onConnected, disconnect } from "@getalby/bitcoin-connect-react"
 
 type LightningPiggyConnectProps = {
   language: "de" | "en" | "es"
 }
 
-// Update the translations object to include the kid-friendly explanation
+// Update the translations object to remove scanning-related entries
 const translations = {
   de: {
     connect: "Sparschwein verbinden",
@@ -20,9 +21,6 @@ const translations = {
     sats: "Sats",
     disconnect: "Trennen",
     connectPiggy: "Verbinde dein Sparschwein",
-    scanQR: "Scanne den QR-Code mit deiner Lightning Wallet",
-    or: "oder",
-    pasteNWC: "Füge deinen NWC-String ein",
     cancel: "Abbrechen",
     piggyConnected: "Sparschwein verbunden!",
     yourBalance: "Dein Guthaben",
@@ -34,15 +32,9 @@ const translations = {
     bringPiggyTitle: "Bring dein Sparschwein in die digitale Welt!",
     bringPiggyExplanation:
       "Dein echtes Sparschwein kann jetzt auch im Computer leben! Wie durch Zauberei können wir es hierher bringen, damit es deine digitalen Münzen sammeln kann.",
-    magicWaysTitle: "Du hast zwei magische Wege, um dein Sparschwein hierher zu bringen:",
-    scanMagicPicture: "Zaubere mit dem magischen Bild",
-    scanMagicExplanation:
-      "Halte dein Handy über dieses besondere Bild. Es ist wie ein Zauberportal, das dein Sparschwein von deinem Zimmer direkt in den Computer bringt!",
-    typeSecretCode: "Flüstere den Geheimcode",
-    typeSecretExplanation:
-      "Wenn du bereits einen Geheimcode hast, kannst du ihn hier eintippen. Das ist wie ein Zauberspruch, der dein Sparschwein ruft, damit es in den Computer hüpfen kann!",
-    piggyAppearExplanation:
-      "Sobald dein Sparschwein hier ist, kann es anfangen, deine digitalen Münzen zu sammeln. Du kannst zusehen, wie es wächst und tolle Belohnungen bekommt!",
+    connectWithWallet: "Verbinde mit deiner Wallet",
+    connectExplanation: "Klicke auf den Knopf, um dein digitales Sparschwein mit deiner Lightning-Wallet zu verbinden!",
+    magicPortalOpening: "Magisches Portal öffnet sich...",
   },
   en: {
     connect: "Connect Piggy",
@@ -52,9 +44,6 @@ const translations = {
     sats: "sats",
     disconnect: "Disconnect",
     connectPiggy: "Connect your Piggy Bank",
-    scanQR: "Scan the QR code with your Lightning Wallet",
-    or: "or",
-    pasteNWC: "paste your NWC string",
     cancel: "Cancel",
     piggyConnected: "Piggy Bank Connected!",
     yourBalance: "Your Balance",
@@ -66,15 +55,9 @@ const translations = {
     bringPiggyTitle: "Bring Your Piggy Bank to the Digital World!",
     bringPiggyExplanation:
       "Your real piggy bank can now live in the computer too! Like magic, we can bring it here to collect your digital coins.",
-    magicWaysTitle: "You have two magical ways to bring your piggy bank here:",
-    scanMagicPicture: "Cast a Spell with the Magic Picture",
-    scanMagicExplanation:
-      "Hold your phone over this special picture. It's like a magic portal that brings your piggy bank from your room straight into the computer!",
-    typeSecretCode: "Whisper the Secret Code",
-    typeSecretExplanation:
-      "If you already have a secret code, you can type it in here. It's like a magic spell that calls your piggy bank to jump into the computer!",
-    piggyAppearExplanation:
-      "Once your piggy bank is here, it can start collecting your digital coins. You can watch it grow and earn awesome rewards!",
+    connectWithWallet: "Connect with your Wallet",
+    connectExplanation: "Click the button to connect your digital piggy bank to your Lightning wallet!",
+    magicPortalOpening: "Magic portal opening...",
   },
   es: {
     connect: "Conectar Alcancía",
@@ -84,9 +67,6 @@ const translations = {
     sats: "sats",
     disconnect: "Desconectar",
     connectPiggy: "Conecta tu Alcancía",
-    scanQR: "Escanea el código QR con tu Billetera Lightning",
-    or: "o",
-    pasteNWC: "Pega tu cadena NWC",
     cancel: "Cancelar",
     piggyConnected: "¡Alcancía Conectada!",
     yourBalance: "Tu Saldo",
@@ -98,15 +78,9 @@ const translations = {
     bringPiggyTitle: "¡Trae tu Alcancía al Mundo Digital!",
     bringPiggyExplanation:
       "¡Tu alcancía real ahora también puede vivir en la computadora! Como por arte de magia, podemos traerla aquí para recolectar tus monedas digitales.",
-    magicWaysTitle: "Tienes dos formas mágicas de traer tu alcancía aquí:",
-    scanMagicPicture: "Lanza un Hechizo con la Imagen Mágica",
-    scanMagicExplanation:
-      "Sostén tu teléfono sobre esta imagen especial. ¡Es como un portal mágico que trae tu alcancía desde tu habitación directamente a la computadora!",
-    typeSecretCode: "Susurra el Código Secreto",
-    typeSecretExplanation:
-      "Si ya tienes un código secreto, puedes escribirlo aquí. ¡Es como un hechizo mágico que llama a tu alcancía para que salte a la computadora!",
-    piggyAppearExplanation:
-      "Una vez que tu alcancía esté aquí, puede comenzar a recolectar tus monedas digitales. ¡Puedes verla crecer y ganar recompensas increíbles!",
+    connectWithWallet: "Conecta con tu Billetera",
+    connectExplanation: "¡Haz clic en el botón para conectar tu alcancía digital con tu billetera Lightning!",
+    magicPortalOpening: "Portal mágico abriéndose...",
   },
 }
 
@@ -379,43 +353,80 @@ export function LightningPiggyConnect({ language }: LightningPiggyConnectProps) 
   const [balance, setBalance] = useState(0)
   const [showWidget, setShowWidget] = useState(true)
   const [isExpanded, setIsExpanded] = useState(false)
-  const [nwcString, setNwcString] = useState("")
+  const [weblnProvider, setWeblnProvider] = useState<any>(null)
 
   const t = translations[language]
 
-  // Simulate connection to Lightning Piggy
-  const connectPiggy = () => {
-    setIsConnecting(true)
+  // Check if we're in a browser environment
+  const isBrowser = typeof window !== "undefined" && typeof HTMLElement !== "undefined"
 
-    // Simulate API connection delay
-    setTimeout(() => {
+  // Initialize Bitcoin Connect when component mounts
+  useEffect(() => {
+    // Only run in browser environment
+    if (!isBrowser) return
+
+    // Initialize Bitcoin Connect with app name and specific connectors
+    // Completely discard LN Link by using only the specific connectors we want
+    init({
+      appName: "Bitcoin Kids Learning",
+      // Only include these four specific connectors and exclude everything else
+      include: ["alby", "coinos", "nwc", "lnbits"],
+      exclude: ["lnlink"], // Explicitly exclude LN Link for extra safety
+      showBalance: true, // Request balance from wallet
+    })
+
+    // Set up listener for when a wallet connects
+    const unsubscribe = onConnected((provider) => {
+      console.log("WebLN provider connected:", provider)
+      setWeblnProvider(provider)
       setIsConnected(true)
       setIsConnecting(false)
-      // Start with a random balance between 100-5000 sats
-      setBalance(Math.floor(Math.random() * 4900) + 100)
-    }, 1500)
+
+      // Get the initial balance
+      fetchBalance(provider)
+    })
+
+    return () => {
+      // Clean up listener when component unmounts
+      unsubscribe()
+    }
+  }, [])
+
+  // Function to fetch balance from the connected wallet
+  const fetchBalance = async (provider: any) => {
+    try {
+      const { balance } = await provider.getBalance()
+      console.log("Wallet balance:", balance)
+      setBalance(balance)
+    } catch (error) {
+      console.error("Error fetching balance:", error)
+    }
   }
 
-  // Simulate disconnection
+  // Connect to wallet using Bitcoin Connect
+  const connectPiggy = () => {
+    setIsConnecting(true)
+  }
+
+  // Disconnect from wallet
   const disconnectPiggy = () => {
+    disconnect()
     setIsConnected(false)
+    setWeblnProvider(null)
     setBalance(0)
     setIsExpanded(false)
   }
 
-  // Simulate balance updates
+  // Periodically update balance when connected
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && weblnProvider) {
       const interval = setInterval(() => {
-        // Randomly add 10-100 sats occasionally
-        if (Math.random() > 0.7) {
-          setBalance((prev) => prev + Math.floor(Math.random() * 90) + 10)
-        }
-      }, 5000)
+        fetchBalance(weblnProvider)
+      }, 10000) // Check balance every 10 seconds
 
       return () => clearInterval(interval)
     }
-  }, [isConnected])
+  }, [isConnected, weblnProvider])
 
   // Add this useEffect after the existing useEffect for balance updates
   useEffect(() => {
@@ -432,13 +443,6 @@ export function LightningPiggyConnect({ language }: LightningPiggyConnectProps) 
       window.removeEventListener("showPiggyBank", handleShowPiggy)
     }
   }, [])
-
-  // Animation for the coin dropping
-  const coinVariants = {
-    initial: { y: -20, opacity: 0 },
-    animate: { y: 0, opacity: 1, transition: { duration: 0.5 } },
-    exit: { y: 20, opacity: 0, transition: { duration: 0.3 } },
-  }
 
   return (
     <>
@@ -661,105 +665,145 @@ export function LightningPiggyConnect({ language }: LightningPiggyConnectProps) 
         )}
       </AnimatePresence>
 
-      {/* Connection Modal - would appear when connecting */}
+      {/* Connection Modal - simplified with Bitcoin Connect */}
       <AnimatePresence>
         {isConnecting && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
             onClick={() => setIsConnecting(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-sm sm:max-w-md rounded-xl bg-white p-4 sm:p-6 shadow-xl"
+              initial={{ scale: 0.9, opacity: 0, y: 10 }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+                transition: { type: "spring", bounce: 0.4, duration: 0.6 },
+              }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              className="w-full max-w-sm rounded-2xl bg-gradient-to-b from-pink-50 to-blue-50 p-5 shadow-lg border-2 border-pink-200"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="mb-3 sm:mb-4 text-center">
-                <h3 className="text-lg sm:text-xl font-bold text-pink-600">{t.bringPiggyTitle}</h3>
-                <p className="mt-2 text-sm text-gray-600">{t.bringPiggyExplanation}</p>
+              {/* Floating stars background */}
+              <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <motion.div
+                    key={`star-${i}`}
+                    className="absolute text-yellow-300 text-opacity-60"
+                    style={{
+                      fontSize: Math.random() * 14 + 8 + "px",
+                      left: Math.random() * 100 + "%",
+                      top: Math.random() * 100 + "%",
+                    }}
+                    animate={{
+                      y: [0, -10, 0],
+                      opacity: [0.4, 0.8, 0.4],
+                    }}
+                    transition={{
+                      repeat: Number.POSITIVE_INFINITY,
+                      duration: 2 + Math.random() * 3,
+                      delay: Math.random() * 2,
+                    }}
+                  >
+                    ✨
+                  </motion.div>
+                ))}
               </div>
 
-              <div className="mb-4 sm:mb-5">
-                <h4 className="font-bold text-sm sm:text-base text-purple-600 mb-2">{t.magicWaysTitle}</h4>
-
-                <div className="bg-blue-50 rounded-lg p-3 sm:p-4 mb-4 border-2 border-blue-100">
-                  <div className="flex items-start gap-2 mb-2">
-                    <div className="bg-blue-100 rounded-full p-1 mt-0.5">
-                      <span className="text-lg">✨</span>
-                    </div>
-                    <div>
-                      <h5 className="font-bold text-blue-700 text-sm">{t.scanMagicPicture}</h5>
-                      <p className="text-xs sm:text-sm text-blue-600">{t.scanMagicExplanation}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center mt-3">
-                    <div className="h-36 w-36 sm:h-40 sm:w-40 rounded-lg bg-white p-2 relative border-2 border-blue-200">
-                      {/* This would be a real QR code in production */}
-                      <div className="absolute inset-4 grid grid-cols-5 grid-rows-5 gap-1">
-                        {Array.from({ length: 25 }).map((_, i) => (
-                          <div key={i} className={`${Math.random() > 0.5 ? "bg-black" : "bg-white"} rounded-sm`}></div>
-                        ))}
-                      </div>
-
-                      {/* Add a small piggy icon in the center of the QR code */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-white p-1 rounded-md">
-                          <div className="text-pink-500 text-xl">🐷</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+              {/* Content */}
+              <div className="relative z-10">
+                {/* Header */}
+                <div className="text-center mb-4">
+                  <motion.div
+                    className="inline-block mb-2"
+                    animate={{ rotate: [0, -5, 0, 5, 0] }}
+                    transition={{ repeat: Number.POSITIVE_INFINITY, duration: 5, ease: "easeInOut" }}
+                  >
+                    <PiggyBankIcon className="h-12 w-12 text-pink-500 mx-auto" />
+                  </motion.div>
+                  <h3 className="text-xl font-bold text-pink-600 mb-1">Magic Piggy Portal</h3>
+                  <p className="text-sm text-pink-600/80">Tap to bring your piggy bank to life!</p>
                 </div>
 
-                <div className="bg-purple-50 rounded-lg p-3 sm:p-4 border-2 border-purple-100">
-                  <div className="flex items-start gap-2 mb-2">
-                    <div className="bg-purple-100 rounded-full p-1 mt-0.5">
-                      <span className="text-lg">🔑</span>
-                    </div>
-                    <div>
-                      <h5 className="font-bold text-purple-700 text-sm">{t.typeSecretCode}</h5>
-                      <p className="text-xs sm:text-sm text-purple-600">{t.typeSecretExplanation}</p>
-                    </div>
-                  </div>
+                {/* Piggy animation - simplified */}
+                <div className="bg-white/60 rounded-xl p-4 mb-4 flex justify-center items-center relative overflow-hidden">
+                  <motion.div
+                    className="relative h-24 w-24"
+                    animate={{ y: [0, -4, 0] }}
+                    transition={{ repeat: Number.POSITIVE_INFINITY, duration: 2, ease: "easeInOut" }}
+                  >
+                    <Image
+                      src="https://www.lightningpiggy.com/content/images/2024/01/BY_-_Lightning_Piggy_logo_-_character.svg"
+                      alt="Lightning Piggy"
+                      fill
+                      className="object-contain"
+                      unoptimized
+                    />
+                  </motion.div>
 
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      placeholder={t.pasteNWC}
-                      className="w-full rounded-lg border-2 border-purple-200 p-2 text-xs sm:text-sm focus:border-purple-400 focus:outline-none"
-                      value={nwcString}
-                      onChange={(e) => setNwcString(e.target.value)}
+                  {/* Coin animation */}
+                  <motion.div
+                    className="absolute h-6 w-6 rounded-full bg-yellow-400 flex items-center justify-center text-[10px] font-bold text-yellow-800 border border-yellow-500 shadow-md"
+                    initial={{ y: 50, x: -20, opacity: 0 }}
+                    animate={{
+                      y: -50,
+                      opacity: [0, 1, 0],
+                      rotate: 360,
+                    }}
+                    transition={{
+                      repeat: Number.POSITIVE_INFINITY,
+                      duration: 3,
+                      repeatDelay: 2,
+                    }}
+                  >
+                    ₿
+                  </motion.div>
+                </div>
+
+                {/* Connect button area */}
+                <div className="bg-blue-100/70 rounded-xl p-4 mb-4 border border-blue-200">
+                  <p className="text-center text-blue-700 text-sm mb-3">
+                    Touch the magic button to open a portal for your piggy bank!
+                  </p>
+
+                  <div className="relative flex justify-center items-center">
+                    {/* Glow effect */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-pink-300 to-purple-300 rounded-lg blur-md"
+                      animate={{
+                        opacity: [0.5, 0.7, 0.5],
+                      }}
+                      transition={{
+                        repeat: Number.POSITIVE_INFINITY,
+                        duration: 2,
+                      }}
+                    />
+
+                    {/* Bitcoin Connect Button */}
+                    <BitcoinConnectButton
+                      onConnect={(provider) => {
+                        console.log("Connected with provider:", provider)
+                        setWeblnProvider(provider)
+                        setIsConnected(true)
+                        setIsConnecting(false)
+                        fetchBalance(provider)
+                      }}
+                      className="relative z-10 mx-auto bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-lg shadow-md border border-pink-300 transition-all duration-200"
                     />
                   </div>
                 </div>
-              </div>
 
-              <p className="text-center text-xs sm:text-sm text-gray-600 mb-4 bg-yellow-50 p-2 rounded-lg border border-yellow-100">
-                {t.piggyAppearExplanation}
-              </p>
-
-              <div className="flex gap-2">
+                {/* Cancel button */}
                 <Button
-                  variant="outline"
-                  className="flex-1 text-xs sm:text-sm py-1 sm:py-2 border-gray-300"
+                  variant="ghost"
+                  size="sm"
+                  className="w-full text-gray-500 hover:text-gray-700 hover:bg-gray-100/50 text-sm py-2"
                   onClick={() => setIsConnecting(false)}
                 >
-                  {t.cancel}
-                </Button>
-                <Button
-                  className="flex-1 bg-pink-500 hover:bg-pink-600 text-xs sm:text-sm py-1 sm:py-2"
-                  onClick={() => {
-                    setIsConnecting(false)
-                    setIsConnected(true)
-                    setBalance(Math.floor(Math.random() * 4900) + 100)
-                  }}
-                >
-                  {t.connect}
+                  Go back
                 </Button>
               </div>
             </motion.div>
@@ -769,4 +813,3 @@ export function LightningPiggyConnect({ language }: LightningPiggyConnectProps) 
     </>
   )
 }
-

@@ -58,4 +58,3 @@ const TabsItem = React.forwardRef<React.ElementRef<"div">, React.ComponentPropsW
 TabsItem.displayName = "TabsItem"
 
 export { Tabs, TabsList, TabsTrigger, TabsContent, TabsItem }
-

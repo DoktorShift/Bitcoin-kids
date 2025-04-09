@@ -111,7 +111,7 @@ export function BitcoinFacts({ language = "de" }: BitcoinFactsProps) {
         color: "border-purple-200",
         title: "Begrenzt wie Sammelkarten!",
         description:
-          "Es gibt nur 21 Millionen Bitcoins - nicht mehr und nicht weniger! Das ist wie bei seltenen Sammelkarten: Je weniger es gibt, desto wertvoller sind sie. Manche Menschen besitzen nur einen kleinen Teil eines Bitcoins, so wie ein Puzzleteil.",
+          "Es gibt nur 21 Millionen Bitcoin - nicht mehr und nicht weniger! Das ist wie bei seltenen Sammelkarten: Je weniger es gibt, desto wertvoller sind sie. Manche Menschen besitzen nur einen kleinen Teil eines Bitcoins, so wie ein Puzzleteil.",
       },
       {
         icon: <Globe className="h-6 w-6 text-blue-600" />,
@@ -132,7 +132,7 @@ export function BitcoinFacts({ language = "de" }: BitcoinFactsProps) {
         color: "border-red-200",
         title: "Computer als Goldgräber!",
         description:
-          "Neue Bitcoins werden von Computern 'geschürft', wie Goldgräber nach Gold suchen. Diese Computer lösen Rätsel, die gar nicht so schwer sind - aber es ist wie ein Glücksspiel, wer zuerst die richtige Lösung findet! Das Besondere: Egal wie viele Computer mitmachen, die Rätsel werden automatisch angepasst, damit immer ungefähr alle 10 Minuten neue Bitcoins gefunden werden. Wie ein Spiel, bei dem die Regeln sich ändern, damit es nicht zu leicht oder zu schwer wird!",
+          "Neue Bitcoin werden von Computern 'geschürft', wie Goldgräber nach Gold suchen. Diese Computer lösen Rätsel, die gar nicht so schwer sind - aber es ist wie ein Glücksspiel, wer zuerst die richtige Lösung findet! Das Besondere: Egal wie viele Computer mitmachen, die Rätsel werden automatisch angepasst, damit immer ungefähr alle 10 Minuten neue Bitcoin gefunden werden. Wie ein Spiel, bei dem die Regeln sich ändern, damit es nicht zu leicht oder zu schwer wird!",
       },
       {
         icon: <Rocket className="h-6 w-6 text-indigo-600" />,
@@ -169,7 +169,7 @@ export function BitcoinFacts({ language = "de" }: BitcoinFactsProps) {
         color: "border-purple-200",
         title: "Limited like trading cards!",
         description:
-          "There are only 21 million Bitcoins - no more and no less! It's like rare trading cards: The fewer there are, the more valuable they are. Some people own only a small part of a Bitcoin, like a puzzle piece.",
+          "There are only 21 million Bitcoin - no more and no less! It's like rare trading cards: The fewer there are, the more valuable they are. Some people own only a small part of a Bitcoin, like a puzzle piece.",
       },
       {
         icon: <Globe className="h-6 w-6 text-blue-600" />,
@@ -190,7 +190,7 @@ export function BitcoinFacts({ language = "de" }: BitcoinFactsProps) {
         color: "border-red-200",
         title: "Computers as gold diggers!",
         description:
-          "New Bitcoins are 'mined' by computers, like gold diggers looking for gold. These computers solve puzzles that aren't super hard - but it's like a lottery to see who finds the right answer first! The special thing: No matter how many computers join in, the puzzles are automatically adjusted so that new Bitcoins are found about every 10 minutes. It's like a game where the rules change to make sure it doesn't get too easy or too hard!",
+          "New Bitcoin are 'mined' by computers, like gold diggers looking for gold. These computers solve puzzles that aren't super hard - but it's like a lottery to see who finds the right answer first! The special thing: No matter how many computers join in, the puzzles are automatically adjusted so that new Bitcoin are found about every 10 minutes. It's like a game where the rules change to make sure it doesn't get too easy or too hard!",
       },
       {
         icon: <Rocket className="h-6 w-6 text-indigo-600" />,
@@ -227,7 +227,7 @@ export function BitcoinFacts({ language = "de" }: BitcoinFactsProps) {
         color: "border-purple-200",
         title: "¡Limitado como tarjetas coleccionables!",
         description:
-          "¡Solo hay 21 millones de Bitcoins, ni más ni menos! Es como las tarjetas coleccionables raras: cuantas menos hay, más valiosas son. Algunas personas poseen solo una pequeña parte de un Bitcoin, como una pieza de rompecabezas.",
+          "¡Solo hay 21 millones de Bitcoin, ni más ni menos! Es como las tarjetas coleccionables raras: cuantas menos hay, más valiosas son. Algunas personas poseen solo una pequeña parte de un Bitcoin, como una pieza de rompecabezas.",
       },
       {
         icon: <Globe className="h-6 w-6 text-blue-600" />,
@@ -248,7 +248,7 @@ export function BitcoinFacts({ language = "de" }: BitcoinFactsProps) {
         color: "border-red-200",
         title: "¡Computadoras como buscadores de oro!",
         description:
-          "Los nuevos Bitcoins son 'minados' por computadoras, como buscadores de oro buscando oro. Estas computadoras resuelven acertijos que no son super difíciles - ¡pero es como una lotería para ver quién encuentra la respuesta correcta primero! Lo especial: No importa cuántas computadoras se unan, los acertijos se ajustan automáticamente para que se encuentren nuevos Bitcoins aproximadamente cada 10 minutos. ¡Es como un juego donde las reglas cambian para asegurarse de que no se vuelva demasiado fácil o difícil!",
+          "Los nuevos Bitcoin son 'minados' por computadoras, como buscadores de oro buscando oro. Estas computadoras resuelven acertijos que no son super difíciles - ¡pero es como una lotería para ver quién encuentra la respuesta correcta primero! Lo especial: No importa cuántas computadoras se unan, los acertijos se ajustan automáticamente para que se encuentren nuevos Bitcoin aproximadamente cada 10 minutos. ¡Es como un juego donde las reglas cambian para asegurarse de que no se vuelva demasiado fácil o difícil!",
       },
       {
         icon: <Rocket className="h-6 w-6 text-indigo-600" />,
@@ -297,4 +297,3 @@ export function BitcoinFacts({ language = "de" }: BitcoinFactsProps) {
     </div>
   )
 }
-
