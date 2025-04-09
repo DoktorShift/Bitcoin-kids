@@ -1,5 +1,6 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import Image from "next/image"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -10,7 +11,12 @@ import { BitcoinQuiz } from "@/components/bitcoin-quiz"
 import { BitcoinFacts } from "@/components/bitcoin-facts"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { TuttleTwinsDropdown } from "@/components/tuttle-twins-dropdown"
-import { LightningPiggyConnect } from "@/components/lightning-piggy-connect"
+
+// Dynamically import the LightningPiggyConnect component with SSR disabled
+const LightningPiggyConnect = dynamic(
+  () => import("@/components/lightning-piggy-connect").then((mod) => ({ default: mod.LightningPiggyConnect })),
+  { ssr: false },
+)
 
 // Typen für die Übersetzungen
 type Language = "de" | "en" | "es"
@@ -462,10 +468,13 @@ export default function BitcoinKidsLearning() {
             <CardFooter className="flex flex-wrap justify-center gap-2 sm:gap-4 bg-blue-50 p-4 mt-auto">
               <Button
                 className="rounded-full bg-green-500 text-white hover:bg-green-600 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
-                onClick={handleDIYInfo}
+                onClick={() => window.open("https://www.lightningpiggy.com/", "_blank")}
+                asChild
               >
-                <Info className="h-3 w-3 sm:h-4 sm:w-4" />
-                {t.infoButton}
+                <a href="https://www.lightningpiggy.com/" target="_blank" rel="noopener noreferrer">
+                  <Info className="h-3 w-3 sm:h-4 sm:w-4" />
+                  {t.infoButton}
+                </a>
               </Button>
             </CardFooter>
           </Card>
@@ -572,4 +581,3 @@ export default function BitcoinKidsLearning() {
     </div>
   )
 }
-
